@@ -41,6 +41,10 @@
   border-top: none;
 }
 </style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dygraph/2.1.0/dygraph.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dygraph/2.1.0/dygraph.min.css" />
+
 </head>
 <body>
 
@@ -89,15 +93,15 @@
     <tbody>
       <tr>
         <td>A1A1</td>
-        <td><input type="number" min="0" max="1" step="0.001" value="0"></td>
+        <td><input type="number" min="0" max="1" step="0.001" value="1"></td>
       </tr>
       <tr>
         <td>A1A2</td>
-        <td><input type="number" min="0" max="1" step="0.001" value="0"></td>
+        <td><input type="number" min="0" max="1" step="0.001" value="1"></td>
       </tr>
       <tr>
         <td>A2A2</td>
-        <td><input type="number" min="0" max="1" step="0.001" value="0"></td>
+        <td><input type="number" min="0" max="1" step="0.001" value="1"></td>
       </tr>
     </tbody>
   </table>
@@ -118,7 +122,13 @@
   </table>
 </div>
 
-<script>
+<div>
+  <button type="button">Run</button>
+</div>
+
+<div id="graphdiv"></div>
+
+<script type="text/javascript">
 function openTab(evt, cityName) {
   var i, tabcontent, tablinks;
   tabcontent = document.getElementsByClassName("tabcontent");
@@ -135,6 +145,33 @@ function openTab(evt, cityName) {
 
 // Get the element with id="defaultOpen" and click on it
 document.getElementById("defaultOpen").click();
+
+g = new Dygraph(
+    // containing div
+    document.getElementById("graphdiv"),
+    [
+      [1, 0.5],
+      [2, 0.5],
+      [3, 0.5]
+    ],
+    {
+      valueRange: [0, 1],
+      title: "Title",
+      ylabel: "A1 Freq",
+      xlabel: "Generation",
+      labels: ["Generation", "A1 Freq"],
+/*      axes: {
+        x: {
+          ticker: function(min, max, pixels, opts, dygraph, vals) {
+          }
+        },
+        y: {
+          ticker: function(min, max, pixels, opts, dygraph, vals) {
+          }
+        }
+      }*/
+    }
+  );
 </script>
    
 </body>
