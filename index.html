@@ -92,15 +92,15 @@
     <tbody>
       <tr>
         <td>A1A1</td>
-        <td><input id="A1Fit" type="number" min="0" max="1" step="0.001" value="1"></td>
+        <td><input id="fitA1" type="number" min="0" max="1" step="0.01" value="1"></td>
       </tr>
       <tr>
         <td>A1A2</td>
-        <td><input id="HetFit" type="number" min="0" max="1" step="0.001" value="1"></td>
+        <td><input id="fitHet" type="number" min="0" max="1" step="0.01" value="1"></td>
       </tr>
       <tr>
         <td>A2A2</td>
-        <td><input id="A2Fit" type="number" min="0" max="1" step="0.001" value="1"></td>
+        <td><input id="fitA2" type="number" min="0" max="1" step="0.01" value="1"></td>
       </tr>
     </tbody>
   </table>
@@ -161,6 +161,12 @@ function runSim() {
   var popGen = parseInt(document.getElementById("popGen").value);
 
   var p = parseFloat(document.getElementById("A1Freq").value);
+  var q = 0.0;
+
+  var fitA1 = parseFloat(document.getElementById("fitA1").value);
+  var fitHet = parseFloat(document.getElementById("fitHet").value);
+  var fitA2 = parseFloat(document.getElementById("fitA2").value);
+  var w = 0.0;
 
   data = [];
 
@@ -170,7 +176,18 @@ function runSim() {
     data.push(genArray.slice());
 
     for (let j = 1; j < popNum + 1; j++) {
-      genArray[j] = rbinom(popSize, genArray[j])/popSize;
+      // Random drift
+      p = rbinom(popSize, genArray[j])/popSize;
+      q = 1 - p;
+
+      // Mutation
+
+      // Fitness
+      w = p*p*fitA1 + 2*p*q*fitHet + q*q*fitA2;
+      p = (p*p*fitA1 + p*q*fitHet)/w;
+
+      // Store result
+      genArray[j] = p;
     }
   }
 
