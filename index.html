@@ -55,7 +55,6 @@
   <button class="tablinks" onclick="openTab(event, 'allele')">Alleles</button>
   <button class="tablinks" onclick="openTab(event, 'fitness')">Fitness</button>
   <button class="tablinks" onclick="openTab(event, 'mutation')">Mutation</button>
-
 </div>
 
 <div id="population" class="tabcontent">
@@ -63,15 +62,15 @@
     <tbody>
       <tr>
         <td>Populations</td>
-        <td><input type="number" min="1" max="100" step="1" value="10"></td>
+        <td><input id="popNum" type="number" min="1" max="100" step="1" value="10"></td>
       </tr>
       <tr>
         <td>Pop Size</td>
-        <td><input type="number" min="1" step="1" value="100"></td>
+        <td><input id="popSize" type="number" min="1" step="1" value="100"></td>
       </tr>
       <tr>
         <td>Generations</td>
-        <td><input type="number" min="1" step="1" value="100"></td>
+        <td><input id="popGen" type="number" min="1" step="1" value="200"></td>
       </tr>
     </tbody>
   </table>
@@ -123,7 +122,7 @@
 </div>
 
 <div>
-  <button type="button">Run</button>
+  <button type="button" onclick="runSim()">Run</button>
 </div>
 
 <div id="graphdiv"></div>
@@ -146,20 +145,45 @@ function openTab(evt, cityName) {
 // Get the element with id="defaultOpen" and click on it
 document.getElementById("defaultOpen").click();
 
-g = new Dygraph(
+function rbinom(n, p) {
+  var x = 0;
+  for(var i = 0; i < n; i++) {
+    x+=(Math.random() < p);
+  }
+  return x;
+}
+
+var data = [];
+
+function runSim() {
+  var popNum = parseInt(document.getElementById("popNum").value);
+  var popSize = parseInt(document.getElementById("popSize").value);
+  var popGen = parseInt(document.getElementById("popGen").value);
+
+  var p = 0.5;
+
+  data = [];
+
+  var genArray = Array(popNum + 1).fill(p, 1);
+  for (let i = 0; i < popGen; i++) {
+    genArray[0] = i;
+    data.push(genArray.slice());
+
+    for (let j = 1; j < popNum + 1; j++) {
+      genArray[j] = rbinom(popSize, genArray[j])/popSize;
+    }
+  }
+
+  g = new Dygraph(
     // containing div
     document.getElementById("graphdiv"),
-    [
-      [1, 0.5],
-      [2, 0.5],
-      [3, 0.5]
-    ],
+    data,
     {
       valueRange: [0, 1],
       title: "Title",
       ylabel: "A1 Freq",
       xlabel: "Generation",
-      labels: ["Generation", "A1 Freq"],
+//      labels: ["Generation", "A1 Freq"],
 /*      axes: {
         x: {
           ticker: function(min, max, pixels, opts, dygraph, vals) {
@@ -172,6 +196,8 @@ g = new Dygraph(
       }*/
     }
   );
+}
+
 </script>
    
 </body>
